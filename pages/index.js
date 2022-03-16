@@ -30,13 +30,12 @@ const Home = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-900 py-2">
+    <main className="isolate min-h-screen w-full bg-slate-900">
       <Head>
         <title>Ticket to Ride Calculator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main className="isolate m-6 min-h-max w-full p-8 text-center">
+      <header className="container mx-auto pt-10 text-center">
         <img
           className="mx-auto h-20 w-20"
           src="/train-ticket.svg"
@@ -60,17 +59,17 @@ const Home = () => {
             Add new player
           </button>
         </form>
-        <div className="mt-10 grid grid-cols-3 gap-8">
-          {players.map((player, index) => (
-            <PlayerCard
-              name={player.playerName}
-              deletePlayer={() => deletePlayer(player.playerName)}
-              key={player.playerName}
-            />
-          ))}
-        </div>
-      </main>
-    </div>
+      </header>
+      <div className="container mx-auto mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {players.map((player, index) => (
+          <PlayerCard
+            name={player.playerName}
+            deletePlayer={() => deletePlayer(player.playerName)}
+            key={player.playerName}
+          />
+        ))}
+      </div>
+    </main>
   );
 };
 
