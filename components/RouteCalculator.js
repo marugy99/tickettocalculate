@@ -40,6 +40,22 @@ const RouteCalculator = ({
 
   return (
     <>
+      <section className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="text-xl font-semibold text-white md:text-2xl">
+          <p className="my-4">
+            Total points: {routeInfo.points}
+            </p>
+          <p className="text-lg sm:text-xl text-slate-500">
+            Total length: {routeInfo.routeLength}
+          </p>
+        </div>
+        <button
+          className="mt-4 mr-2 rounded bg-rose-600 py-2 px-4 font-medium text-white hover:bg-rose-700"
+          onClick={resetRoutePoints}
+        >
+          Reset
+        </button>
+      </section>
       <div className="mt-8 grid grid-cols-2 gap-2 md:grid-cols-4">
         {pointButtons.map((btn) => (
           <section
@@ -81,18 +97,6 @@ const RouteCalculator = ({
           </section>
         ))}
       </div>
-      <section className="mt-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="text-xl font-semibold text-white md:text-2xl">
-          <p className="my-4">Total points: {routeInfo.points}</p>
-          <p>Total length: {routeInfo.routeLength}</p>
-        </div>
-        <button
-          className="mt-4 mr-2 rounded bg-rose-600 py-2 px-4 font-medium text-white hover:bg-rose-700"
-          onClick={resetRoutePoints}
-        >
-          Reset
-        </button>
-      </section>
     </>
   );
 };

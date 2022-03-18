@@ -203,6 +203,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 points: 0,
                 routeLength: 0,
               });
+              setTotalPoints(totalPoints - routeInfo.points)
             }}
             key={name}
           />
