@@ -129,7 +129,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
 
   return (
     <div
-      className={`rounded bg-white bg-gradient-to-r p-1.5 mx-4 md:mx-0 ${
+      className={`rounded bg-white bg-gradient-to-r p-1.5 mx-4 lg:mx-5 ${
         playerColor == "" ? "from-slate-50 to-slate-300" : playerColor
       } `}
     >

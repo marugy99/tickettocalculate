@@ -38,6 +38,9 @@ const RouteCalculator = ({
     },
   ];
 
+  const audioSuccess = new Audio("./short-success-sound.mp3");
+  const audioFailed = new Audio("./slash.mp3");
+
   return (
     <> 
       <section className="mt-6 flex flex-wrap items-center justify-between gap-4">
@@ -51,11 +54,15 @@ const RouteCalculator = ({
         </div>
         <button
           className="mt-4 mr-2 rounded bg-rose-600 py-2 px-4 text-sm sm:text-base font-medium text-white hover:bg-rose-700"
-          onClick={resetRoutePoints}
+          onClick={() => {
+            resetRoutePoints()
+            audioFailed.play()
+          }}
         >
           Reset
         </button>
       </section>
+      <audio src="./short-success-sound.mp3"></audio>
       <div className="mt-8 grid grid-cols-2 gap-2 md:grid-cols-4">
         {pointButtons.map((btn) => (
           <section
@@ -77,7 +84,10 @@ const RouteCalculator = ({
                 value={btn.point}
                 data-multiply={btn.multiplyBy}
                 data-action="add"
-                onClick={handleRoutePoints}
+                onClick={(e) => {
+                  handleRoutePoints(e)
+                  audioSuccess.play()
+                }}
               >
                 +
               </button>
@@ -86,7 +96,10 @@ const RouteCalculator = ({
                 value={btn.point}
                 data-multiply={btn.multiplyBy}
                 data-action="deduct"
-                onClick={handleRoutePoints}
+                onClick={(e) => {
+                  handleRoutePoints(e)
+                  audioFailed.play()
+                }}
               >
                 -
               </button>
