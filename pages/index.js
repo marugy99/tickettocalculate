@@ -35,7 +35,7 @@ const Home = () => {
         <title>Ticket to Ride Calculator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className="container mx-auto pt-10 text-center">
+      <header className="container mx-auto pt-10 text-center px-4 sm:px-0">
         <img
           className="mx-auto h-20 w-20"
           src="/train-ticket.svg"
@@ -43,19 +43,19 @@ const Home = () => {
           aria-hidden="true"
         />
 
-        <h1 className="my-4 text-5xl font-bold text-white">
+        <h1 className="my-4 text-4xl sm:text-5xl font-bold text-white">
           Ticket to Ride Calculator
         </h1>
-        <form action="#" onSubmit={(e) => addPlayer(e)}>
+        <form action="#" onSubmit={(e) => addPlayer(e)} className="flex items-center justify-center gap-2 flex-wrap">
           <input
             type="text"
-            className="mr-4 rounded bg-gray-100 py-2 px-4"
+            className="rounded bg-gray-100 py-2 px-4 w-full sm:w-auto"
             placeholder="Enter name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
-          <button className="rounded bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-4 font-semibold text-white">
+          <button className="rounded bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-4 font-semibold text-white hover:from-indigo-700">
             Add new player
           </button>
         </form>
