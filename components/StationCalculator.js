@@ -11,8 +11,8 @@ const StationCalculator = ({ handleStationPoints, stationPoints, name }) => {
         <div>
           <p className="text-2xl font-bold md:text-3xl">{stationPoints.amount}</p>
           <img
-            className="mx-auto h-12 w-12 md:h-16 md:w-16"
-            src="./wagon.svg"
+            className="mx-auto h-12 mt-2 w-12 md:h-16 md:w-16"
+            src="./station.svg"
             alt="Train ticket icon"
             aria-hidden="true"
           />
