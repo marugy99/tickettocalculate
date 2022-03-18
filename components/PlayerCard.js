@@ -3,6 +3,7 @@ import Modal from "../components/Modal";
 import RouteCalculator from "../components/RouteCalculator";
 import ColorPicker from "../components/ColorPicker";
 import DestinationTickets from "../components/DestinationTickets";
+import StationCalculator from "../components/StationCalculator";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { IoColorFillOutline } from "react-icons/io5";
 
@@ -15,6 +16,10 @@ const PlayerCard = ({ name, deletePlayer }) => {
   });
   const [destinationTickets, setDestinationTickets] = useState([]);
   const [destinationPoints, setDestinationPoints] = useState(0);
+  const [stationPoints, setStationPoints] = useState({
+    amount: 0,
+    points: 0
+  });
   const [totalPoints, setTotalPoints] = useState(0);
 
   const handleRoutePoints = (value, multiplyBy, action) => {
@@ -103,9 +108,28 @@ const PlayerCard = ({ name, deletePlayer }) => {
     }
   };
 
+  const handleStationPoints = (action) => {
+    if(action === "add" && !(stationPoints.amount === 3)) {
+
+      setStationPoints({
+        amount: stationPoints.amount + 1,
+        points: (stationPoints.amount + 1) * 4
+      })
+
+      setTotalPoints(totalPoints + (1 * 4))
+
+    } else if (action === "deduct" && !(stationPoints.amount === 0)) {
+      setStationPoints({
+        amount: stationPoints.amount - 1,
+        points: (stationPoints.amount - 1) * 4
+      })
+      setTotalPoints(totalPoints - (1 * 4))
+    }
+  }
+
   return (
     <div
-      className={`rounded bg-white bg-gradient-to-r p-1.5 mx-4 sm:mx-0 ${
+      className={`rounded bg-white bg-gradient-to-r p-1.5 mx-4 md:mx-0 ${
         playerColor == "" ? "from-slate-50 to-slate-300" : playerColor
       } `}
     >
@@ -123,8 +147,8 @@ const PlayerCard = ({ name, deletePlayer }) => {
           {name}
         </h2>
 
-        <div className="items-start justify-between xl:grid xl:grid-cols-2">
-          <section className="min-h-full pb-3 xl:pr-4 xl:pb-0">
+        <div className="space-y-6">
+          <section>
             <div className="flex flex-col items-center justify-between gap-2 2xl:flex-row">
               <h3 className="text-xl font-bold">Routes</h3>
               <button
@@ -134,16 +158,16 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 Edit
               </button>
             </div>
-            <p className="mt-4 text-center text-lg xl:text-left">
+            <p className="mt-4 text-center text-base xl:text-left">
               Points: <span className="font-bold">{routeInfo.points}</span>
             </p>
-            <p className="mt-2 text-center text-base text-slate-400 xl:text-left">
-              Length: <span className="font-bold">{routeInfo.routeLength}</span>
+            <p className="mt-2 text-center text-sm italic text-slate-400 xl:text-left">
+              {routeInfo.routeLength} trains used.
             </p>
           </section>
 
-          <section className="min-h-full border-t border-slate-500 pt-3 xl:mt-0 xl:border-t-0 xl:border-l xl:pt-0">
-            <div className="flex flex-col items-center justify-between gap-2 xl:ml-4 2xl:flex-row">
+          <section className="border-t border-slate-500 pt-3">
+            <div className="flex flex-col items-center justify-between gap-2 2xl:flex-row">
               <h3 className="text-xl font-bold">Destinations</h3>
               <button
                 className="rounded bg-slate-700 py-2 px-4 text-sm font-semibold text-white hover:bg-slate-600"
@@ -152,9 +176,10 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 Edit
               </button>
             </div>
-            <ul className="mt-4 flex flex-wrap gap-1 text-center xl:ml-4">
-              {destinationTickets.length > 0 &&
-                destinationTickets.map((ticket, index) => (
+            {destinationTickets.length > 0 ?
+              <ul className="mt-4 flex flex-wrap gap-1 text-center">
+                {destinationTickets.map((ticket, index) => (
+                  // TODO: Make this a separate component
                   <li
                     key={index}
                     className={`w-full rounded ${
@@ -169,16 +194,36 @@ const PlayerCard = ({ name, deletePlayer }) => {
                       {ticket.points}
                     </span>
                   </li>
-                ))}
-            </ul>
+                ))}  
+              </ul> :
+                <p className="mt-2 text-center text-sm italic text-slate-400 xl:text-left">
+                  No tickets yet.
+                </p>
+            }
+          </section>
+          <section className="border-slate-500 border-t pt-3">
+            <div className="flex flex-col items-center justify-between gap-2 2xl:flex-row">
+              <h3 className="text-xl font-bold">Stations</h3>
+              <button
+                className="rounded bg-slate-700 py-2 px-4 text-sm font-semibold text-white hover:bg-slate-600"
+                onClick={() => setIsOpen("station")}
+              >
+                Edit
+              </button>
+            </div>
+            <p className="mt-4 text-center text-base xl:text-left">
+              Points: <span className="font-bold">{stationPoints.points}</span>
+            </p>
+          </section>
+          <section className="flex items-center gap-2 border-slate-500 border-t pt-4">
+            <input onChange={(e) => e.target.checked ? setTotalPoints(totalPoints + 10) : setTotalPoints(totalPoints - 10)} id={`longest-path-${name}`} type="checkbox" className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded-sm" />
+            <label htmlFor={`longest-path-${name}`} className="font-medium text-white text-lg">
+              Longest path
+              </label>
           </section>
         </div>
+        <p className="mt-6 text-2xl font-semibold text-right">Total: {totalPoints}</p>
 
-        <div className="flex items-center gap-2 mt-6">
-          <input onChange={(e) => e.target.checked ? setTotalPoints(totalPoints + 10) : setTotalPoints(totalPoints - 10)} name="longest-path" id="longest-path" type="checkbox" className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded-sm" />
-          <label for="longest-path" className="font-medium text-white text-lg">Longest path</label>
-        </div>
-        <p className="mt-6 text-xl font-semibold text-right">Total: {totalPoints}</p>
 
         <Modal
           isOpen={isOpen === "routes"}
@@ -276,6 +321,21 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 e.target.dataset.action
               )
             }
+          />
+        </Modal>
+        <Modal 
+          isOpen={isOpen === "station"}
+          closeModal={() => setIsOpen(false)}
+          title="Stations"
+          key="Stations"
+        >
+          <p className="mt-2 text-center text-lg text-slate-400">
+            How many stations <span className="capitalize">{name}</span> didn't use?
+          </p>
+          <StationCalculator 
+            handleStationPoints={(e) => handleStationPoints(e.target.dataset.action)} 
+            stationPoints={stationPoints} 
+            name={name} 
           />
         </Modal>
       </article>
