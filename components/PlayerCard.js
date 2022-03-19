@@ -129,11 +129,11 @@ const PlayerCard = ({ name, deletePlayer }) => {
 
   return (
     <div
-      className={`rounded bg-white bg-gradient-to-r p-1.5 mx-4 lg:mx-5 ${
+      className={`rounded min-h-full bg-white bg-gradient-to-r p-1.5 mx-4 lg:mx-5 ${
         playerColor == "" ? "from-slate-50 to-slate-300" : playerColor
       } `}
     >
-      <article className="relative h-full rounded bg-slate-800 py-8 px-6 text-white shadow-xl">
+      <article className="relative min-h-full rounded bg-slate-800 py-8 px-6 text-white shadow-xl">
         <div className="absolute right-4 top-3 flex gap-2">
           <button onClick={() => setIsOpen("picker")} aria-label="Change color">
             <IoColorFillOutline className="h-5 w-5 text-slate-500 hover:text-slate-200" />

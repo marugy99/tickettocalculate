@@ -5,6 +5,7 @@ import PlayerCard from "../components/PlayerCard";
 const Home = () => {
   const [name, setName] = useState("");
   const [players, setPlayers] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const addPlayer = (e) => {
     e.preventDefault();
@@ -36,23 +37,27 @@ const Home = () => {
   };
 
   return (
-    <main className="isolate min-h-screen w-full bg-slate-900 flex flex-col">
+    <main className="isolate min-h-screen w-full bg-slate-900">
       <Head>
         <title>Ticket to Ride Calculator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className="container mx-auto pt-10 text-center px-4 sm:px-0 flex-1">
+      <header className="container mx-auto pt-10 text-center px-4 sm:px-0">
         <img
           className="mx-auto h-20 w-20"
           src="/train-ticket.svg"
           alt="Train ticket icon"
           aria-hidden="true"
         />
-
-        <h1 className="my-4 text-4xl sm:text-5xl font-bold text-white">
-          Ticket to Ride Calculator
-        </h1>
-        <form action="#" onSubmit={(e) => addPlayer(e)} className="flex items-start justify-center gap-2 flex-wrap">
+        <div>
+          <h1 className="mt-4 text-4xl sm:text-5xl font-bold text-white">
+            Ticket to Ride Calculator
+          </h1>
+          <p className="text-white text-sm text-center mt-4">
+            Made with ♡ by <a href="https://marucodes.com/" rel="noreferrer" target="_blank" className="hover:underline inline-block">Maru</a> 
+          </p>
+        </div>
+        <form action="#" onSubmit={(e) => addPlayer(e)} className="flex items-start mt-4 justify-center gap-2 flex-wrap">
           <div>
             <input
               type="text"
@@ -69,7 +74,7 @@ const Home = () => {
           </button>
         </form>
       </header>
-      <div className="container mx-auto mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-4 flex-grow pb-4">
+      <div className="container mx-auto mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-fit lg:gap-4 pb-4">
         {players.map((player, index) => (
           <PlayerCard
             name={player.playerName}
@@ -78,9 +83,6 @@ const Home = () => {
           />
         ))}
       </div>
-      <footer className="text-white text-sm text-center flex-1 py-4 grid place-items-center">
-        Made with ♡ by Maru
-      </footer>
     </main>
   );
 };
