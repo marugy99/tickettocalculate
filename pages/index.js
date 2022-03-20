@@ -5,7 +5,6 @@ import PlayerCard from "../components/PlayerCard";
 const Home = () => {
   const [name, setName] = useState("");
   const [players, setPlayers] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
 
   const addPlayer = (e) => {
     e.preventDefault();
@@ -40,7 +39,8 @@ const Home = () => {
     <main className="isolate min-h-screen w-full bg-slate-900">
       <Head>
         <title>Ticket to Ride Calculator</title>
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content="Score calculator for the board game Ticket to Ride: Europe" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <header className="container mx-auto pt-10 text-center px-4 sm:px-0">
         <img

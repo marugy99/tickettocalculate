@@ -56,7 +56,7 @@ const DestinationTickets = ({ handleDestinationPoints }) => {
     },
     {
       name: "Budapest - Sofia",
-      points: 9,
+      points: 5,
     },
     {
       name: "Cadiz - Stockholm",
