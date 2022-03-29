@@ -3,9 +3,9 @@ import Modal from "../components/Modal";
 import RouteCalculator from "../components/RouteCalculator";
 import ColorPicker from "../components/ColorPicker";
 import DestinationTickets from "../components/DestinationTickets";
+import DestinationTicketsList from "../components/DestinationTicketsList";
 import StationCalculator from "../components/StationCalculator";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { IoColorFillOutline } from "react-icons/io5";
+import { IoColorFillOutline, IoTrashOutline } from "react-icons/io5";
 
 const PlayerCard = ({ name, deletePlayer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,24 +22,37 @@ const PlayerCard = ({ name, deletePlayer }) => {
   });
   const [totalPoints, setTotalPoints] = useState(0);
 
+  const updateTotal = (action, value) => {
+    if(action === "+") {
+      setTotalPoints(totalPoints + value)
+    } else if (action === "-") {
+      setTotalPoints(totalPoints - value)
+    }
+  };
+
   const handleRoutePoints = (value, multiplyBy, action) => {
     const total = 1 * multiplyBy;
+
     if (action === "add") {
+
       setRouteInfo({
         points: routeInfo.points + total,
         routeLength: routeInfo.routeLength + value,
       });
-      setTotalPoints(totalPoints + total)
+      updateTotal("+", total);
+
     } else if (
       action === "deduct" &&
       !(routeInfo.points <= 0) &&
       !(routeInfo.points < total)
     ) {
+
       setRouteInfo({
         points: routeInfo.points - total,
         routeLength: routeInfo.routeLength - value,
       });
-      setTotalPoints(totalPoints - total)
+      updateTotal("-", total);
+
     }
   };
 
@@ -52,29 +65,45 @@ const PlayerCard = ({ name, deletePlayer }) => {
       (ticket) => ticket.name == name && ticket.action != "Failed"
     );
         
-    // TODO: Refactor the "Done" and "Failed" logic
     if (action === "Done") {
       if(!ticketExists) {
+
         setDestinationPoints(destinationPoints + points)
-        setTotalPoints(totalPoints + points)
+        updateTotal("+", points)
+        
       } else if (!ticketExistsWithAction) {
-        setDestinationPoints(destinationPoints + (points * 2))
-        setTotalPoints(totalPoints + (points * 2))
+
+        // If the same ticket already exists with a "Failed" action, add double points to make it a positive number
+        const doublePoints = (points * 2);
+        setDestinationPoints(destinationPoints + doublePoints);
+        updateTotal("+", doublePoints);
+
       }
-      
       
     } else if (action === "Failed") {
       if(!ticketExists) {
+
         setDestinationPoints(destinationPoints + -points)
-        setTotalPoints(totalPoints + -points)
+        updateTotal("+", -points)
+
       } else if (ticketExistsWithAction) {
-        setDestinationPoints(destinationPoints + (-points * 2))
-        setTotalPoints(totalPoints + (-points * 2))
+
+        // If the same ticket already exists with a "Done" action, deduct double points to make it a negative number
+        const doublePoints = (-points * 2);
+        setDestinationPoints(destinationPoints + doublePoints)
+        updateTotal("+", doublePoints)
+
       }
     }
+  };
 
+  const handleDestinationTickets = (name, points, action) => {
+    const ticketExists = destinationTickets.some(
+      (ticket) => ticket.name == name
+    );
 
     if (!ticketExists) {
+      // If ticket doesn't exist, add it to the destination tickets object
       setDestinationTickets([
         {
           name: name,
@@ -84,6 +113,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
         ...destinationTickets,
       ]);
     } else {
+      // If ticket already exists and the action was changed, update same ticket with new action
       setDestinationTickets((prevState) =>
         prevState.map((ticket) =>
           ticket.name === name ? { ...ticket, action: action } : ticket
@@ -99,12 +129,17 @@ const PlayerCard = ({ name, deletePlayer }) => {
 
     setDestinationTickets(updatedTickets);
 
+    // Update points accordingly
     if (action === "Done") {
+
       setDestinationPoints(destinationPoints - points);
-      setTotalPoints(totalPoints - points);
+      updateTotal("-", points);
+
     } else if (action === "Failed") {
+
       setDestinationPoints(destinationPoints + points);
-      setTotalPoints(totalPoints + points);
+      updateTotal("+", points);
+
     }
   };
 
@@ -115,17 +150,16 @@ const PlayerCard = ({ name, deletePlayer }) => {
         amount: stationPoints.amount + 1,
         points: (stationPoints.amount + 1) * 4
       })
-
-      setTotalPoints(totalPoints + (1 * 4))
+      updateTotal("+", (1 * 4));
 
     } else if (action === "deduct" && !(stationPoints.amount === 0)) {
       setStationPoints({
         amount: stationPoints.amount - 1,
         points: (stationPoints.amount - 1) * 4
       })
-      setTotalPoints(totalPoints - (1 * 4))
+      updateTotal("-", (1 * 4));
     }
-  }
+  };
 
   return (
     <div
@@ -139,7 +173,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
             <IoColorFillOutline className="h-5 w-5 text-slate-500 hover:text-slate-200" />
           </button>
           <button onClick={deletePlayer} aria-label="Delete player">
-            <RiDeleteBin5Line className="h-5 w-5 text-slate-500 hover:text-rose-500" />
+            <IoTrashOutline className="h-5 w-5 text-slate-500 hover:text-rose-500" />
           </button>
         </div>
 
@@ -177,23 +211,9 @@ const PlayerCard = ({ name, deletePlayer }) => {
               </button>
             </div>
             {destinationTickets.length > 0 ?
-              <ul className="mt-4 flex flex-wrap gap-1 text-center">
+              <ul className="mt-4 space-y-1 text-center text-base md:text-xs">
                 {destinationTickets.map((ticket, index) => (
-                  // TODO: Make this a separate component
-                  <li
-                    key={index}
-                    className={`w-full rounded ${
-                      ticket.action === "Done"
-                        ? "bg-lime-100 text-lime-900"
-                        : "bg-rose-100 text-rose-800"
-                    } py-1 px-2 text-base md:text-xs`}
-                  >
-                    {ticket.name}{" "}
-                    <span className="font-bold">
-                      {ticket.action === "Done" ? "+" : "-"}
-                      {ticket.points}
-                    </span>
-                  </li>
+                  <DestinationTicketsList key={index} action={ticket.action} name={ticket.name} points={ticket.points} />
                 ))}  
               </ul> :
                 <p className="mt-2 text-center text-sm italic text-slate-400 xl:text-left">
@@ -201,6 +221,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 </p>
             }
           </section>
+
           <section className="border-slate-500 border-t pt-3">
             <div className="flex flex-col items-center justify-between gap-2 2xl:flex-row">
               <h3 className="text-xl font-bold">Stations</h3>
@@ -216,14 +237,14 @@ const PlayerCard = ({ name, deletePlayer }) => {
             </p>
           </section>
           <section className="flex items-center gap-2 border-slate-500 border-t pt-4">
-            <input onChange={(e) => e.target.checked ? setTotalPoints(totalPoints + 10) : setTotalPoints(totalPoints - 10)} id={`longest-path-${name}`} type="checkbox" className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded-sm" />
+            <input onChange={(e) => e.target.checked ? updateTotal("+", 10) : updateTotal("-", 10)} id={`longest-path-${name}`} type="checkbox" className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded-sm" />
             <label htmlFor={`longest-path-${name}`} className="font-medium text-white text-lg">
               Longest path
               </label>
           </section>
         </div>
-        <p className="mt-6 text-2xl font-semibold text-right">Total: {totalPoints}</p>
 
+        <p className="mt-6 text-2xl font-semibold text-right">Total: {totalPoints}</p>
 
         <Modal
           isOpen={isOpen === "routes"}
@@ -248,7 +269,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 points: 0,
                 routeLength: 0,
               });
-              setTotalPoints(totalPoints - routeInfo.points)
+              updateTotal("-", routeInfo.points)
             }}
             key={name}
           />
@@ -278,34 +299,19 @@ const PlayerCard = ({ name, deletePlayer }) => {
           <section className="mt-6 bg-slate-700 py-4 px-4 rounded">
             <p className="sm:text-lg text-white font-semibold">Tickets for <span className="capitalize">{name}</span></p>
             {destinationTickets.length == 0 && <p className="text-white italic mt-2">No tickets yet.</p>}
-            <ul className="mt-4 flex flex-wrap gap-2">
+            <ul className="mt-4 space-y-2 text-sm sm:text-base">
               {destinationTickets.length > 0 &&
                 destinationTickets.map((ticket, index) => (
-                  // Make this a separate component
-                  <li
-                    key={index}
-                    className={`w-full rounded ${
-                      ticket.action === "Done"
-                        ? "bg-lime-100 text-lime-900"
-                        : "bg-rose-100 text-rose-800"
-                    } flex justify-between py-2 px-4 text-sm sm:text-base`}
-                  >
-                    <p>
-                      {ticket.name}
-                      <span className="ml-2 font-bold">
-                        {ticket.action === "Done" ? "+" : "-"}
-                        {ticket.points}
-                      </span>
-                    </p>
+                  <DestinationTicketsList key={index} action={ticket.action} name={ticket.name} points={ticket.points}>
                     <button
                       aria-label="Delete ticket"
                       onClick={() =>
                         deleteTicket(ticket.name, ticket.points, ticket.action)
                       }
                     >
-                      <RiDeleteBin5Line className="h-4 w-4 sm:h-5 sm:w-5 text-slate-500 hover:text-rose-700" />
+                      <IoTrashOutline className="h-4 w-4 sm:h-5 sm:w-5 text-slate-500 hover:text-rose-700" />
                     </button>
-                  </li>
+                  </DestinationTicketsList>
                 ))}
             </ul>
             <p className="mt-6 sm:text-lg font-semibold text-slate-400">
@@ -314,15 +320,22 @@ const PlayerCard = ({ name, deletePlayer }) => {
           </section>
 
           <DestinationTickets
-            handleDestinationPoints={(e) =>
-              handleDestinationPoints(
+            handleDestination={(e) =>
+              {handleDestinationPoints(
                 e.target.dataset.ticket,
                 parseInt(e.target.value),
                 e.target.dataset.action
               )
+
+              handleDestinationTickets(
+                e.target.dataset.ticket,
+                parseInt(e.target.value),
+                e.target.dataset.action
+              )}
             }
           />
         </Modal>
+        
         <Modal 
           isOpen={isOpen === "station"}
           closeModal={() => setIsOpen(false)}

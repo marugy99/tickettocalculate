@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const DestinationTickets = ({ handleDestinationPoints }) => {
+const DestinationTickets = ({ handleDestination }) => {
   const allTickets = [
     {
       name: "Amsterdam - Pamplona",
@@ -219,7 +219,7 @@ const DestinationTickets = ({ handleDestinationPoints }) => {
                 value={ticket.points}
                 data-ticket={ticket.name}
                 data-action="Done"
-                onClick={handleDestinationPoints}
+                onClick={handleDestination}
                 className="rounded text-sm sm:text-base bg-lime-500 py-2 px-4 font-semibold hover:bg-lime-400"
               >
                 Done +
@@ -228,7 +228,7 @@ const DestinationTickets = ({ handleDestinationPoints }) => {
                 value={ticket.points}
                 data-ticket={ticket.name}
                 data-action="Failed"
-                onClick={handleDestinationPoints}
+                onClick={handleDestination}
                 className="rounded text-sm sm:text-base bg-rose-500 py-2 px-4 font-semibold hover:bg-rose-400"
               >
                 Failed -
