@@ -43,9 +43,8 @@ const Home = () => {
   };
 
   const finishGame = () => {
-    const updatedPlayers = players.sort((a, b) => b.points - a.points);
-    setPlayers(updatedPlayers);
-  };
+    setPlayers((prevState) => [...prevState.sort((a, b) => b.points - a.points)]);
+  }; 
 
   return (
     <main className="isolate min-h-screen w-full bg-slate-900">
