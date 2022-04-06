@@ -7,7 +7,7 @@ import DestinationTicketsList from "../components/DestinationTicketsList";
 import StationCalculator from "../components/StationCalculator";
 import { IoColorFillOutline, IoTrashOutline } from "react-icons/io5";
 
-const PlayerCard = ({ name, deletePlayer }) => {
+const PlayerCard = ({ name, deletePlayer, parentCallback }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [playerColor, setPlayerColor] = useState("");
   const [routeInfo, setRouteInfo] = useState({
@@ -18,15 +18,21 @@ const PlayerCard = ({ name, deletePlayer }) => {
   const [destinationPoints, setDestinationPoints] = useState(0);
   const [stationPoints, setStationPoints] = useState({
     amount: 0,
-    points: 0
+    points: 0,
   });
   const [totalPoints, setTotalPoints] = useState(0);
 
   const updateTotal = (action, value) => {
-    if(action === "+") {
-      setTotalPoints(totalPoints + value)
+    if (action === "+") {
+
+      setTotalPoints(totalPoints + value);
+      parentCallback(name, (totalPoints + value));
+
     } else if (action === "-") {
-      setTotalPoints(totalPoints - value)
+
+      setTotalPoints(totalPoints - value);
+      parentCallback(totalPoints - value);
+      
     }
   };
 
@@ -34,25 +40,21 @@ const PlayerCard = ({ name, deletePlayer }) => {
     const total = 1 * multiplyBy;
 
     if (action === "add") {
-
       setRouteInfo({
         points: routeInfo.points + total,
         routeLength: routeInfo.routeLength + value,
       });
       updateTotal("+", total);
-
     } else if (
       action === "deduct" &&
       !(routeInfo.points <= 0) &&
       !(routeInfo.points < total)
     ) {
-
       setRouteInfo({
         points: routeInfo.points - total,
         routeLength: routeInfo.routeLength - value,
       });
       updateTotal("-", total);
-
     }
   };
 
@@ -64,35 +66,26 @@ const PlayerCard = ({ name, deletePlayer }) => {
     const ticketExistsWithAction = destinationTickets.some(
       (ticket) => ticket.name == name && ticket.action != "Failed"
     );
-        
+
     if (action === "Done") {
-      if(!ticketExists) {
-
-        setDestinationPoints(destinationPoints + points)
-        updateTotal("+", points)
-        
+      if (!ticketExists) {
+        setDestinationPoints(destinationPoints + points);
+        updateTotal("+", points);
       } else if (!ticketExistsWithAction) {
-
         // If the same ticket already exists with a "Failed" action, add double points to make it a positive number
-        const doublePoints = (points * 2);
+        const doublePoints = points * 2;
         setDestinationPoints(destinationPoints + doublePoints);
         updateTotal("+", doublePoints);
-
       }
-      
     } else if (action === "Failed") {
-      if(!ticketExists) {
-
-        setDestinationPoints(destinationPoints + -points)
-        updateTotal("+", -points)
-
+      if (!ticketExists) {
+        setDestinationPoints(destinationPoints + -points);
+        updateTotal("+", -points);
       } else if (ticketExistsWithAction) {
-
         // If the same ticket already exists with a "Done" action, deduct double points to make it a negative number
-        const doublePoints = (-points * 2);
-        setDestinationPoints(destinationPoints + doublePoints)
-        updateTotal("+", doublePoints)
-
+        const doublePoints = -points * 2;
+        setDestinationPoints(destinationPoints + doublePoints);
+        updateTotal("+", doublePoints);
       }
     }
   };
@@ -131,39 +124,33 @@ const PlayerCard = ({ name, deletePlayer }) => {
 
     // Update points accordingly
     if (action === "Done") {
-
       setDestinationPoints(destinationPoints - points);
       updateTotal("-", points);
-
     } else if (action === "Failed") {
-
       setDestinationPoints(destinationPoints + points);
       updateTotal("+", points);
-
     }
   };
 
   const handleStationPoints = (action) => {
-    if(action === "add" && !(stationPoints.amount === 3)) {
-
+    if (action === "add" && !(stationPoints.amount === 3)) {
       setStationPoints({
         amount: stationPoints.amount + 1,
-        points: (stationPoints.amount + 1) * 4
-      })
-      updateTotal("+", (1 * 4));
-
+        points: (stationPoints.amount + 1) * 4,
+      });
+      updateTotal("+", 1 * 4);
     } else if (action === "deduct" && !(stationPoints.amount === 0)) {
       setStationPoints({
         amount: stationPoints.amount - 1,
-        points: (stationPoints.amount - 1) * 4
-      })
-      updateTotal("-", (1 * 4));
+        points: (stationPoints.amount - 1) * 4,
+      });
+      updateTotal("-", 1 * 4);
     }
   };
 
   return (
     <div
-      className={`rounded min-h-full bg-white bg-gradient-to-r p-1.5 mx-4 lg:mx-5 ${
+      className={`mx-4 min-h-full rounded bg-white bg-gradient-to-r p-1.5 lg:mx-5 ${
         playerColor == "" ? "from-slate-50 to-slate-300" : playerColor
       } `}
     >
@@ -210,19 +197,25 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 Edit
               </button>
             </div>
-            {destinationTickets.length > 0 ?
+            {destinationTickets.length > 0 ? (
               <ul className="mt-4 space-y-1 text-center text-base md:text-xs">
                 {destinationTickets.map((ticket, index) => (
-                  <DestinationTicketsList key={index} action={ticket.action} name={ticket.name} points={ticket.points} />
-                ))}  
-              </ul> :
-                <p className="mt-2 text-center text-sm italic text-slate-400 xl:text-left">
-                  No tickets yet.
-                </p>
-            }
+                  <DestinationTicketsList
+                    key={index}
+                    action={ticket.action}
+                    name={ticket.name}
+                    points={ticket.points}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-center text-sm italic text-slate-400 xl:text-left">
+                No tickets yet.
+              </p>
+            )}
           </section>
 
-          <section className="border-slate-500 border-t pt-3">
+          <section className="border-t border-slate-500 pt-3">
             <div className="flex flex-col items-center justify-between gap-2 2xl:flex-row">
               <h3 className="text-xl font-bold">Stations</h3>
               <button
@@ -236,15 +229,27 @@ const PlayerCard = ({ name, deletePlayer }) => {
               Points: <span className="font-bold">{stationPoints.points}</span>
             </p>
           </section>
-          <section className="flex items-center gap-2 border-slate-500 border-t pt-4">
-            <input onChange={(e) => e.target.checked ? updateTotal("+", 10) : updateTotal("-", 10)} id={`longest-path-${name}`} type="checkbox" className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded-sm" />
-            <label htmlFor={`longest-path-${name}`} className="font-medium text-white text-lg">
+          <section className="flex items-center gap-2 border-t border-slate-500 pt-4">
+            <input
+              onChange={(e) =>
+                e.target.checked ? updateTotal("+", 10) : updateTotal("-", 10)
+              }
+              id={`longest-path-${name}`}
+              type="checkbox"
+              className="h-4 w-4 rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label
+              htmlFor={`longest-path-${name}`}
+              className="text-lg font-medium text-white"
+            >
               Longest path
-              </label>
+            </label>
           </section>
         </div>
 
-        <p className="mt-6 text-2xl font-semibold text-right">Total: {totalPoints}</p>
+        <p className="mt-6 text-right text-2xl font-semibold">
+          Total: {totalPoints}
+        </p>
 
         <Modal
           isOpen={isOpen === "routes"}
@@ -269,7 +274,7 @@ const PlayerCard = ({ name, deletePlayer }) => {
                 points: 0,
                 routeLength: 0,
               });
-              updateTotal("-", routeInfo.points)
+              updateTotal("-", routeInfo.points);
             }}
             key={name}
           />
@@ -296,59 +301,71 @@ const PlayerCard = ({ name, deletePlayer }) => {
           title="Destination Tickets"
           key="Destination Tickets"
         >
-          <section className="mt-6 bg-slate-700 py-4 px-4 rounded">
-            <p className="sm:text-lg text-white font-semibold">Tickets for <span className="capitalize">{name}</span></p>
-            {destinationTickets.length == 0 && <p className="text-white italic mt-2">No tickets yet.</p>}
+          <section className="mt-6 rounded bg-slate-700 py-4 px-4">
+            <p className="font-semibold text-white sm:text-lg">
+              Tickets for <span className="capitalize">{name}</span>
+            </p>
+            {destinationTickets.length == 0 && (
+              <p className="mt-2 italic text-white">No tickets yet.</p>
+            )}
             <ul className="mt-4 space-y-2 text-sm sm:text-base">
               {destinationTickets.length > 0 &&
                 destinationTickets.map((ticket, index) => (
-                  <DestinationTicketsList key={index} action={ticket.action} name={ticket.name} points={ticket.points}>
+                  <DestinationTicketsList
+                    key={index}
+                    action={ticket.action}
+                    name={ticket.name}
+                    points={ticket.points}
+                  >
                     <button
                       aria-label="Delete ticket"
                       onClick={() =>
                         deleteTicket(ticket.name, ticket.points, ticket.action)
                       }
                     >
-                      <IoTrashOutline className="h-4 w-4 sm:h-5 sm:w-5 text-slate-500 hover:text-rose-700" />
+                      <IoTrashOutline className="h-4 w-4 text-slate-500 hover:text-rose-700 sm:h-5 sm:w-5" />
                     </button>
                   </DestinationTicketsList>
                 ))}
             </ul>
-            <p className="mt-6 sm:text-lg font-semibold text-slate-400">
+            <p className="mt-6 font-semibold text-slate-400 sm:text-lg">
               Total points: {destinationPoints}
             </p>
           </section>
 
           <DestinationTickets
-            handleDestination={(e) =>
-              {handleDestinationPoints(
+            handleDestination={(e) => {
+              handleDestinationPoints(
                 e.target.dataset.ticket,
                 parseInt(e.target.value),
                 e.target.dataset.action
-              )
+              );
 
               handleDestinationTickets(
                 e.target.dataset.ticket,
                 parseInt(e.target.value),
                 e.target.dataset.action
-              )}
-            }
+              );
+            }}
           />
         </Modal>
-        
-        <Modal 
+
+        <Modal
           isOpen={isOpen === "station"}
           closeModal={() => setIsOpen(false)}
           title="Stations"
           key="Stations"
         >
           <p className="mt-2 text-center text-lg text-slate-400">
-            How many stations <span className="capitalize">{name}</span> didn't use?
+            How many stations <span className="capitalize">{name}</span> didn't
+            use?
           </p>
-          <StationCalculator 
-            handleStationPoints={(e) => handleStationPoints(e.target.dataset.action)} 
-            stationPoints={stationPoints} 
-            name={name} 
+          <StationCalculator
+            handleStationPoints={(e) =>
+              handleStationPoints(e.target.dataset.action)
+            }
+            stationPoints={stationPoints}
+            name={name}
           />
         </Modal>
       </article>

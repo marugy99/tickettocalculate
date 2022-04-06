@@ -1,10 +1,18 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import PlayerCard from "../components/PlayerCard";
 
 const Home = () => {
   const [name, setName] = useState("");
   const [players, setPlayers] = useState([]);
+
+  const callback = useCallback((name, val) => {
+    setPlayers((prevState) =>
+      prevState.map((player) =>
+        player.playerName === name ? { ...player, points: val } : player
+      )
+    );
+  }, []);
 
   const addPlayer = (e) => {
     e.preventDefault();
@@ -15,6 +23,7 @@ const Home = () => {
       setPlayers([
         {
           playerName: name,
+          points: 0
         },
         ...players,
       ]);
@@ -30,6 +39,11 @@ const Home = () => {
       (player) => player.playerName != name
     );
 
+    setPlayers(updatedPlayers);
+  };
+
+  const finishGame = () => {
+    const updatedPlayers = players.sort((a, b) => b.points - a.points);
     setPlayers(updatedPlayers);
   };
 
@@ -96,10 +110,21 @@ const Home = () => {
           <PlayerCard
             name={player.playerName}
             deletePlayer={() => deletePlayer(player.playerName)}
+            parentCallback={callback}
             key={player.playerName}
           />
         ))}
       </div>
+      {players.length >= 2 && 
+      <footer className="py-4">
+        <button 
+          onClick={finishGame}
+          className="bg-gradient-to-r from-indigo-500 to-sky-500 text-white font-semibold rounded py-2 px-4 block mx-auto hover:from-indigo-700"
+        >
+          Finish game
+        </button>
+      </footer>
+      }
     </main>
   );
 };
