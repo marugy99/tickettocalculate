@@ -1,10 +1,12 @@
 import Head from "next/head";
 import { useState, useCallback } from "react";
 import PlayerCard from "../components/PlayerCard";
+import Modal from "../components/Modal";
 
 const Home = () => {
   const [name, setName] = useState("");
   const [players, setPlayers] = useState([]);
+  const [winner, setWinner] = useState(false);
 
   const callback = useCallback((name, val) => {
     setPlayers((prevState) =>
@@ -16,7 +18,6 @@ const Home = () => {
 
   const addPlayer = (e) => {
     e.preventDefault();
-
     const nameExists = players.some((player) => player.playerName == name);
 
     if (name && !nameExists) {
@@ -38,12 +39,14 @@ const Home = () => {
     const updatedPlayers = players.filter(
       (player) => player.playerName != name
     );
-
     setPlayers(updatedPlayers);
   };
 
   const finishGame = () => {
+    // Sort player cards in ascending order
     setPlayers((prevState) => [...prevState.sort((a, b) => b.points - a.points)]);
+    // TODO: Check if there was a tie
+    setWinner(true);
   }; 
 
   return (
@@ -110,19 +113,32 @@ const Home = () => {
             name={player.playerName}
             deletePlayer={() => deletePlayer(player.playerName)}
             parentCallback={callback}
+            totalPoints={player.points}
             key={player.playerName}
           />
         ))}
       </div>
-      {players.length >= 2 && 
-      <footer className="py-4">
-        <button 
-          onClick={finishGame}
-          className="bg-gradient-to-r from-indigo-500 to-sky-500 text-white font-semibold rounded py-2 px-4 block mx-auto hover:from-indigo-700"
-        >
-          Finish game
-        </button>
-      </footer>
+      {players.length >= 2 && players.some((player) => player.points > 0) &&
+        <footer className="py-4">
+          <button 
+            onClick={finishGame}
+            className="bg-gradient-to-r from-indigo-500 to-sky-500 text-white font-semibold rounded py-2 px-4 block mx-auto hover:from-indigo-700"
+          >
+            Finish game
+          </button>
+        </footer>
+      }
+      {
+        winner &&
+          <Modal 
+            isOpen={winner}
+            closeModal={() => setWinner(false)}
+            title="Congratulations!"
+          >
+            <p className="text-white text-lg sm:text-2xl mt-5 text-center">
+              <span className="capitalize">{players[0].playerName}</span> is the winner of this match
+            </p>
+          </Modal>
       }
     </main>
   );

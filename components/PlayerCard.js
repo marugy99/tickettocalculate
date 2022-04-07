@@ -7,7 +7,7 @@ import DestinationTicketsList from "../components/DestinationTicketsList";
 import StationCalculator from "../components/StationCalculator";
 import { IoColorFillOutline, IoTrashOutline } from "react-icons/io5";
 
-const PlayerCard = ({ name, deletePlayer, parentCallback }) => {
+const PlayerCard = ({ name, deletePlayer, parentCallback, totalPoints }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [playerColor, setPlayerColor] = useState("");
   const [routeInfo, setRouteInfo] = useState({
@@ -20,19 +20,12 @@ const PlayerCard = ({ name, deletePlayer, parentCallback }) => {
     amount: 0,
     points: 0,
   });
-  const [totalPoints, setTotalPoints] = useState(0);
 
   const updateTotal = (action, value) => {
     if (action === "+") {
-
-      setTotalPoints(totalPoints + value);
       parentCallback(name, (totalPoints + value));
-
     } else if (action === "-") {
-
-      setTotalPoints(totalPoints - value);
-      parentCallback(totalPoints - value);
-      
+      parentCallback(name, (totalPoints - value));
     }
   };
 
