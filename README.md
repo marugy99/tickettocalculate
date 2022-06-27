@@ -4,7 +4,9 @@
 
 🔧 Built using Next.js and Tailwind.
 
-🌍 [Live site](https://tickettocalculate.com/).
+🌍 [Live site](https://tickettocalculate.com/)
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0e4ba71a-8b91-4f2a-8408-76e7bd91aeac/deploy-status)](https://app.netlify.com/sites/tickettoridecalc-maru/deploys)
 
 # Local development
 
