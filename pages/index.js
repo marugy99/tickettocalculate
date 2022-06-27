@@ -134,8 +134,15 @@ const Home = () => {
             isOpen={winner}
             closeModal={() => setWinner(false)}
             title="Congratulations!"
+            key={winner}
           >
-            <p className="text-white text-lg sm:text-2xl mt-5 text-center">
+            <img
+                className="mx-auto h-10 w-10 md:h-14 md:w-14 mt-5"
+                src="./trophy.svg"
+                alt="Trophy"
+                aria-hidden="true"
+              />
+            <p className="text-white text-lg sm:text-2xl mt-2 pb-6 text-center">
               <span className="capitalize">{players[0].playerName}</span> is the winner of this match
             </p>
           </Modal>
