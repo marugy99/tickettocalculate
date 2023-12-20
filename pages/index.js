@@ -24,7 +24,7 @@ const Home = () => {
       setPlayers([
         {
           playerName: name,
-          points: 0
+          points: 0,
         },
         ...players,
       ]);
@@ -44,10 +44,12 @@ const Home = () => {
 
   const finishGame = () => {
     // Sort player cards in ascending order
-    setPlayers((prevState) => [...prevState.sort((a, b) => b.points - a.points)]);
+    setPlayers((prevState) => [
+      ...prevState.sort((a, b) => b.points - a.points),
+    ]);
     // TODO: Check if there was a tie
     setWinner(true);
-  }; 
+  };
 
   return (
     <main className="isolate min-h-screen w-full bg-slate-900">
@@ -66,21 +68,31 @@ const Home = () => {
           alt="Train ticket icon"
           aria-hidden="true"
         />
-        <div>
-          <h1 className="mt-4 text-4xl font-bold text-white sm:text-5xl">
+        <div className="text-white">
+          <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
             Ticket to Ride Calculator
           </h1>
-          <p className="mt-4 text-center text-sm text-white">
-            Made with ♡ by{" "}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <p className="text-center text-sm">
+              Made with ♡ by{" "}
+              <a
+                href="https://marucodes.com/"
+                rel="noreferrer"
+                target="_blank"
+                className="inline-block hover:underline"
+              >
+                Maru
+              </a>
+            </p>
+            <span aria-hidden="true">-</span>
             <a
-              href="https://marucodes.com/"
-              rel="noreferrer"
+              href="https://www.buymeacoffee.com/marulucenat"
               target="_blank"
-              className="inline-block hover:underline"
+              className="text-center text-sm hover:underline"
             >
-              Maru
+              Buy me a coffee ☕️
             </a>
-          </p>
+          </div>
         </div>
         <form
           action="#"
@@ -118,35 +130,35 @@ const Home = () => {
           />
         ))}
       </div>
-      {players.length >= 2 && players.some((player) => player.points > 0) &&
+      {players.length >= 2 && players.some((player) => player.points > 0) && (
         <footer className="py-4">
-          <button 
+          <button
             onClick={finishGame}
-            className="bg-gradient-to-r from-indigo-500 to-sky-500 text-white font-semibold rounded py-2 px-4 block mx-auto hover:from-indigo-700"
+            className="mx-auto block rounded bg-gradient-to-r from-indigo-500 to-sky-500 py-2 px-4 font-semibold text-white hover:from-indigo-700"
           >
             Finish game
           </button>
         </footer>
-      }
-      {
-        winner &&
-          <Modal 
-            isOpen={winner}
-            closeModal={() => setWinner(false)}
-            title="Congratulations!"
-            key={winner}
-          >
-            <img
-                className="mx-auto h-10 w-10 md:h-14 md:w-14 mt-5"
-                src="./trophy.svg"
-                alt="Trophy"
-                aria-hidden="true"
-              />
-            <p className="text-white text-lg sm:text-2xl mt-2 pb-6 text-center">
-              <span className="capitalize">{players[0].playerName}</span> is the winner of this match
-            </p>
-          </Modal>
-      }
+      )}
+      {winner && (
+        <Modal
+          isOpen={winner}
+          closeModal={() => setWinner(false)}
+          title="Congratulations!"
+          key={winner}
+        >
+          <img
+            className="mx-auto mt-5 h-10 w-10 md:h-14 md:w-14"
+            src="./trophy.svg"
+            alt="Trophy"
+            aria-hidden="true"
+          />
+          <p className="mt-2 pb-6 text-center text-lg text-white sm:text-2xl">
+            <span className="capitalize">{players[0].playerName}</span> is the
+            winner of this match
+          </p>
+        </Modal>
+      )}
     </main>
   );
 };
