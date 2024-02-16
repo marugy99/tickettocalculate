@@ -1,10 +1,13 @@
 import Head from "next/head";
 import { useState, useCallback } from "react";
 import PlayerCard from "../components/PlayerCard";
+import SelectGameMap from "../components/SelectGameMap";
 import Modal from "../components/Modal";
+import { getDefaultGameMap } from "../maps/helpers";
 
 const Home = () => {
   const [name, setName] = useState("");
+  const [gameMap, setGameMap] = useState(getDefaultGameMap());
   const [players, setPlayers] = useState([]);
   const [winner, setWinner] = useState(false);
 
@@ -72,7 +75,7 @@ const Home = () => {
           <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
             Ticket to Ride Calculator
           </h1>
-          <div className="mt-4 flex items-center justify-center gap-2">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <p className="text-center text-sm">
               Made with ♡ by{" "}
               <a
@@ -84,13 +87,13 @@ const Home = () => {
                 Maru
               </a>
             </p>
-            <span aria-hidden="true">-</span>
             <a
               href="https://www.buymeacoffee.com/marulucenat"
               target="_blank"
-              className="text-center text-sm hover:underline"
+              className="group text-center text-sm"
             >
-              Buy me a coffee ☕️
+              <span aria-hidden="true">-</span>{" "}
+              <span className="group-hover:underline">Buy me a coffee ☕️</span>
             </a>
           </div>
         </div>
@@ -118,6 +121,7 @@ const Home = () => {
             Add new player
           </button>
         </form>
+        <SelectGameMap gameMap={gameMap} setGameMap={setGameMap} />
       </header>
       <div className="container mx-auto mt-8 grid min-h-fit grid-cols-1 gap-4 pb-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
         {players.map((player, index) => (
@@ -126,6 +130,7 @@ const Home = () => {
             deletePlayer={() => deletePlayer(player.playerName)}
             parentCallback={callback}
             totalPoints={player.points}
+            gameMap={gameMap}
             key={player.playerName}
           />
         ))}
